@@ -42,8 +42,10 @@ public class HelloSender {
         HelloWorldMessage message = HelloWorldMessage
                 .builder()
                 .id(UUID.randomUUID())
-                .message("Hello!")
+                .message("Hello!!")
                 .build();
+
+        System.out.println("Sending Hello!");
 
         // 2. Using JMS template sendAndReceive to send and receive message
         //    This JMS send and receive responses back with a receive message
@@ -69,6 +71,7 @@ public class HelloSender {
 
             }
         });
+
         // 6. we are getting the body of the message that was sent to us on the temporary reply Queue
         String replyMsg = receviedMsg.getBody(String.class);
         System.out.println(replyMsg);

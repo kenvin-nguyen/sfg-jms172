@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import java.util.UUID;
@@ -35,16 +36,23 @@ public class HelloMessageListener {
 
     @JmsListener(destination = JMSConfig.MY_SEND_RCVQUEUE)
     public void listenForHello(@Payload HelloWorldMessage helloWorldMessage,
-                       @Headers MessageHeaders headers, Message message) throws JMSException {
+                               @Headers MessageHeaders headers, Message jmsMessage,
+                               org.springframework.messaging.Message springMessage) throws JMSException {
 
-        HelloWorldMessage payloadMessage = HelloWorldMessage
+        HelloWorldMessage payloadMesg = HelloWorldMessage
                 .builder()
                 .id(UUID.randomUUID())
-                .message("Hello!")
+                .message("World!!")
                 .build();
+
+        // using Spring Framework message
+        //jmsTemplate.convertAndSend((Destination) springMessage.getHeaders().get("jms_replyTo"), payloadMessage);
 
         // We are taking the JMS reply to write of the message and then
         // adding in the payload message
-        jmsTemplate.convertAndSend(message.getJMSReplyTo(), payloadMessage);
+        System.out.println("Received: ");
+        System.out.println(jmsMessage.getBody(String.class));
+        System.out.println("Rsponse: ");
+        jmsTemplate.convertAndSend(jmsMessage.getJMSReplyTo(), payloadMesg);
     }
 }
